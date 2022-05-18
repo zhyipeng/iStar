@@ -1,0 +1,12 @@
+alembic==1.7.7
+asyncmy==0.2.5
+aiohttp==3.8.1
+aioredis==2.0.1
+fastapi==0.77.1
+fastapi-utils==0.2.1
+python-dotenv==0.20.0
+requests==2.27.1
+SQLAlchemy==1.4.36
+typer==0.4.1
+uvicorn==0.17.6
+zhtools==0.2.3
