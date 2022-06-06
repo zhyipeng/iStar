@@ -25,6 +25,10 @@ export default class UserStore {
     if (tokenCache) {
       this.token = tokenCache;
     }
+    const atCache = localStorage.getItem(TokenCacheKey);
+    if (atCache) {
+      this.accessToken = atCache;
+    }
   }
 
   setToken(token: string, accessToken: string) {
