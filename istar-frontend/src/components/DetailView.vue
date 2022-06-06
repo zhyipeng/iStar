@@ -9,6 +9,7 @@ import type { Repo } from '@/core/interfaces';
 import axios from 'axios';
 import { onUpdated, ref } from 'vue';
 import { Base64 } from 'js-base64';
+import store from '@/store';
 
 const props = defineProps<{
   repo: Repo | null,
@@ -22,6 +23,7 @@ const getReadme = async () => {
   const { data } = await axios.get(url, {
     headers: {
       Accept: 'application/vnd.github.v3+json',
+      Authorization: `token ${store.user.accessToken}`,
     },
   });
   text.value = Base64.decode(data.content);

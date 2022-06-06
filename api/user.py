@@ -10,6 +10,7 @@ router = InferringRouter()
 async def get_userinfo(cli: GithubServer = GitHubClient):
     userinfo = await cli.get_user()
     return {
+        'username': userinfo['login'],
         'avatar': userinfo['avatar_url'],
         'followers': userinfo['followers'],
         'following': userinfo['following'],

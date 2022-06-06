@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 function getUnknownUserInfo(): UserInfo {
   return {
+    username: '',
     avatar: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     followers: 0,
     following: 0,
@@ -10,9 +11,12 @@ function getUnknownUserInfo(): UserInfo {
 }
 
 const UserInfoCacheKey = 'iStarUserInfo';
+const TokenCacheKey = 'iStarToken';
 
 export default class UserStore {
   token: string = '';
+
+  accessToken: string = '';
 
   userinfo = ref<UserInfo>(getUnknownUserInfo());
 
@@ -23,9 +27,11 @@ export default class UserStore {
     }
   }
 
-  setToken(token: string) {
+  setToken(token: string, accessToken: string) {
     localStorage.setItem(UserInfoCacheKey, token);
+    localStorage.setItem(TokenCacheKey, accessToken);
     this.token = token;
+    this.accessToken = accessToken;
   }
 
   setUserInfo(info: UserInfo) {
@@ -39,6 +45,7 @@ export default class UserStore {
   clearUserInfo(refresh: boolean = true) {
     this.userinfo.value = getUnknownUserInfo();
     this.token = '';
+    this.accessToken = '';
     if (refresh) {
       window.location.reload();
     }

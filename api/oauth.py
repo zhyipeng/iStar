@@ -55,5 +55,5 @@ async def oauth_redirect(code: str, state: str = ''):
         if settings.DEBUG:
             host = 'http://localhost:3001'
         return RedirectResponse(
-            f'{host}/?sign={sign}'
+            f'{host}/?sign={sign}&token={access_token}'
         )

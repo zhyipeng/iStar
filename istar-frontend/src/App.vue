@@ -14,11 +14,11 @@ import { computed, onMounted } from 'vue';
 import { getQueryParam } from '@/utils';
 import store from '@/store';
 import { getUserInfo } from '@/api/user';
-import { getStarred } from '@/api/repo';
 import contextMenu from '@/core/context_menu';
 import { getAllTags, getRepoTags } from '@/api/tag';
 import { Signal, signalDispatcher } from '@/core/signals';
 import { ElLoading } from 'element-plus';
+import axios from 'axios';
 
 const selectedRepo = computed(() => store.repo.selected.value);
 
@@ -30,8 +30,31 @@ const fetchUserinfo = async () => {
 };
 
 const fetchRepo = async () => {
-  const repo: any = await getStarred();
-  store.repo.setRepos(repo);
+  let page = 1;
+  let starred = [] as any[];
+  try {
+    while (page < 10) {
+      // eslint-disable-next-line no-await-in-loop
+      const { data } = await axios.get(
+        `https://api.github.com/users/${store.user.userinfo.value.username}/starred?per_page=100&page=${page}`,
+        {
+          headers: {
+            accept: 'application/vnd.github.v3+json',
+            Authorization: `token ${store.user.accessToken}`,
+          },
+        },
+      );
+      starred = starred.concat(data);
+      if (!data || data.length < 100) {
+        break;
+      }
+      page += 1;
+    }
+
+    store.repo.setRepos(starred);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const fetchTags = async () => {
@@ -47,7 +70,8 @@ const fetchRepoTags = async () => {
 const fetchAll = async () => {
   const loading = ElLoading.service();
   try {
-    await Promise.all([fetchUserinfo(), fetchRepo(), fetchTags(), fetchRepoTags()]);
+    await fetchUserinfo();
+    await Promise.all([fetchRepo(), fetchTags(), fetchRepoTags()]);
   } finally {
     loading.close();
   }
@@ -57,8 +81,9 @@ signalDispatcher.register(Signal.Sync, fetchAll);
 
 onMounted(async () => {
   const sign = getQueryParam('sign');
+  const token = getQueryParam('token');
   if (sign) {
-    store.user.setToken(sign);
+    store.user.setToken(sign, token);
     window.location.href = '/';
   } else if (store.user.isLogin()) {
     await fetchAll();
