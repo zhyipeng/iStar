@@ -25,10 +25,10 @@ initial_api(app)
 
 
 @app.get('/')
-async def index(sign: str = None):
+async def index(sign: str = None, token: str = None):
     url = 'static/index.html'
     if sign:
-        url += f'?sign={sign}'
+        url += f'?sign={sign}&token={token}'
     return RedirectResponse(url)
 
 
