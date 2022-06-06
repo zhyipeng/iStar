@@ -73,4 +73,4 @@ class GithubServer(Service):
         }
 
     get_user = AsyncGetAPI(GithubAPI.USER)
-    get_starred = AsyncGetAPI(GithubAPI.STARRED)
+    get_starred = AsyncGetAPI(GithubAPI.STARRED, 'page', 'per_page')
